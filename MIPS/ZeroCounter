@@ -1,0 +1,80 @@
+# Count the number of zeroes in a 32 bit word
+
+
+      .data
+
+# seems like this will only work for numbers as strings cannot be stored as words
+#could alter the code so the user inputs the word to be parsed
+
+      .text
+count0:				#count number of zeros in word happens here
+
+				#initialiazation
+		
+	li $t0, 57	        #The word to be examined which is the integer 57
+	li $t1, 32		#counter - number of times to loop through, size of word
+	li $t2, 1 		#position, start at 1 position
+	li $t4, 0		#counter for zeros 
+	     
+	
+loop0:				#count loop starts here
+	and $t3, $t0, $t2 	#bitwise AND number to compare to position, store in t3
+	
+	bnez $t3, notzero	#checks if t3 is zero, if is, add 1, if isn't, do nothing
+	addi $t4, $t4, 1	#increment counter for zeros
+notzero:
+	
+	sll $t2, $t2, 1       	#shift logical position bit left
+	
+	addi $t1, $t1, -1 	#decrement counter for number of times to loop through
+	bgtz $t1, loop0		#loop while counter is greater than zero
+      
+      
+ 
+      jal  print            # call print routine. 
+      li   $v0, 10          # system call for exit
+      syscall               # we are out of here.
+		
+#########  print the word and the counter
+
+      .data
+wordHead: .asciiz  "The word is :\n" # print a heading
+bitHead: .asciiz  "The 32 bit representation is :\n" # print a heading
+numberHead: .asciiz  "The number of 0's in the word are :\n" # print a heading
+newLine: .asciiz  "\n"  # print a new line
+      .text
+      
+print: 
+                    #print a heading
+      la   $a0, wordHead    # load address of print heading
+      li   $v0, 4           # specify Print String service
+      syscall               # print heading
+                    # print the word value
+      la   $a0, 0($t0)      # load thw word value
+      li   $v0, 1           # specify Print Integer service
+      syscall               # print word value 57
+                    # print a new line      
+      la   $a0, newLine     # load address of print heading
+      li   $v0, 4           # specify Print String service
+      syscall 
+                    # print heading
+      la   $a0, bitHead     # load address of print heading
+      li   $v0, 4           # specify Print String service
+      syscall
+      la   $a0, 0($t0)      # load the word value 57
+      li   $v0, 35          # specify Print Integer service
+      syscall               # print the 32 bit representation of the number 57
+      la   $a0, newLine     # load address of print heading
+      li   $v0, 4           # specify Print String service
+      syscall               # print heading
+      la   $a0, numberHead  # load address of print heading
+      li   $v0, 4           # specify Print String service
+      syscall  
+      la   $a0, 0($t4)      # load the zero counter
+      li   $v0, 1           # specify Print Integer service
+      syscall               # print the zero counter  
+      la   $a0, newLine     # load address of print heading
+      li   $v0, 4           # specify Print String service
+      syscall               # print heading
+      jr   $ra              # return
+	

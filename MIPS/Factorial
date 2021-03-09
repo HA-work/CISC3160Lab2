@@ -1,0 +1,69 @@
+# finds the factorial of a number n entered by the user
+
+      .data
+      
+
+msg1: .asciiz  "Enter a number N to find its factorial :\n" # print a heading
+
+.text
+
+li $v0,4 # print the prompt
+la $a0,msg1
+syscall
+
+li $v0,5 # read in an integer
+syscall
+
+move $t0, $v0 # store the integer in register $t0
+
+
+
+ 
+initilization:		
+
+				#initialiazation
+		
+	la $t1, 0($t0)		#a copy of the number the user enters will be used to count
+	li $t2, 1               # a value 1 will be places in the accumulator
+	     
+	
+loop:			      # loop for the factorial starts here
+	mul $t2, $t2, $t1     # multiply the value of the counter number with the accumulator
+	addi $t1, $t1, -1     # decrement counter
+        bgtz $t1, loop        # checks if the counter hit 0 yet if not goes back
+        jal  print            # call print routine. 
+        li   $v0, 10          # system call for exit
+        syscall               # we are out of here.
+
+#########  print the values and the result
+
+      .data
+firstHead: .asciiz  "The value entered of N is is :\n" # print a heading
+secondHead: .asciiz  "The factorial of N is  is :\n" # print a heading
+newLine: .asciiz  "\n"  # print a new line
+      .text
+      
+print: 
+                    #print a heading
+      la   $a0, firstHead    # load address of print heading
+      li   $v0, 4           # specify Print String service
+      syscall               # print heading
+                    # print the word value
+      la   $a0, 0($t0)      # load the input value
+      li   $v0, 1           # specify Print Integer service
+      syscall               # print value
+                    # print a new line      
+      la   $a0, newLine     # load address of print heading
+      li   $v0, 4           # specify Print String service
+      syscall 
+                    # print heading
+      la   $a0, secondHead     # load address of print heading
+      li   $v0, 4           # specify Print String service
+      syscall
+      la   $a0, 0($t2)      # load the accumulator value
+      li   $v0, 1          # specify Print Integer service
+      syscall               # print the factorial
+      la   $a0, newLine     # load address of print heading
+      li   $v0, 4           # specify Print String service
+      syscall               # print heading
+      jr   $ra              # return

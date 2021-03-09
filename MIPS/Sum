@@ -1,0 +1,69 @@
+# finds the sum of numbers from 1 to n
+#repeat addition with a decreasing value
+      .data
+      
+
+msg1: .asciiz  "Enter a number to find the sum of 1 to N :\n" # print a heading
+
+.text
+
+li $v0,4 # print the prompt
+la $a0,msg1
+syscall
+
+li $v0,5 # read in an integer
+syscall
+
+move $t0, $v0 # store the integer in register $t0
+# for some reason store word would not work
+
+
+ 
+initilization:		
+
+				#initialiazation
+		
+	la $t1, 0($t0)		#a copy of the number the user enters will be used to count and sum
+	li $t2, 0               # will store the result
+	     
+	
+loop:			      # loop for addition starts here
+	add $t2, $t2, $t1     # add the value of the counter number to the store value
+	addi $t1, $t1, -1     # decrement counter
+        bgtz $t1, loop        # checks if the counter hit 0 yet if not goes back
+        jal  print            # call print routine. 
+        li   $v0, 10          # system call for exit
+        syscall               # we are out of here.
+
+#########  print the values and the result
+
+      .data
+firstHead: .asciiz  "The value entered of N is is :\n" # print a heading
+secondHead: .asciiz  "The sum of numbers 1 thru N  is :\n" # print a heading
+newLine: .asciiz  "\n"  # print a new line
+      .text
+      
+print: 
+                    #print a heading
+      la   $a0, firstHead    # load address of print heading
+      li   $v0, 4           # specify Print String service
+      syscall               # print heading
+                    # print the word value
+      la   $a0, 0($t0)      # load the input value
+      li   $v0, 1           # specify Print Integer service
+      syscall               # print value
+                    # print a new line      
+      la   $a0, newLine     # load address of print heading
+      li   $v0, 4           # specify Print String service
+      syscall 
+                    # print heading
+      la   $a0, secondHead     # load address of print heading
+      li   $v0, 4           # specify Print String service
+      syscall
+      la   $a0, 0($t2)      # load the sum value
+      li   $v0, 1          # specify Print Integer service
+      syscall               # print the sum value
+      la   $a0, newLine     # load address of print heading
+      li   $v0, 4           # specify Print String service
+      syscall               # print heading
+      jr   $ra              # return
